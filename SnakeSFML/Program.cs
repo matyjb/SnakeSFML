@@ -47,21 +47,21 @@ namespace SnakeSFML
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() + 20));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
-                Console.WriteLine("Moved up");
+                Console.WriteLine("Moved down");
             }
 
             else if (key.Code.Equals(Keyboard.Key.A))
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() - 20, snakePartsList[0].GetY()));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
-                Console.WriteLine("Moved up");
+                Console.WriteLine("Moved left");
             }
 
             else if (key.Code.Equals(Keyboard.Key.D))
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() + 20, snakePartsList[0].GetY()));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
-                Console.WriteLine("Moved up");
+                Console.WriteLine("Moved right");
             }
         }
 
