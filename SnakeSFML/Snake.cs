@@ -9,7 +9,17 @@ using SFML.Graphics;
 
 namespace Snake
 {
+    enum Directions { N,S,E,W}
 
+    class SnakeDirection
+    {
+        Directions direction;
+
+        public SnakeDirection(Directions directionn = Directions.N)
+        {
+            direction = directionn;
+        }
+    }
 
     class SnakeParticle
     {
@@ -23,7 +33,7 @@ namespace Snake
 
         public void MoveBy(float x, float y)
         {
-            Part.Position = new Vector2f(Part.Position.X - x, Part.Position.Y - y);
+            Part.Position = new Vector2f(Part.Position.X + x, Part.Position.Y + y);
             Console.WriteLine("Moved by x = " + x + " | y = " + y);
         }
 
@@ -36,6 +46,16 @@ namespace Snake
         {
             RenderWindow windoww = (RenderWindow)window;
             windoww.Draw(Part);
+        }
+
+        public float GetX()
+        {
+            return Part.Position.X;
+        }
+
+        public float GetY()
+        {
+            return Part.Position.Y;
         }
     }
 

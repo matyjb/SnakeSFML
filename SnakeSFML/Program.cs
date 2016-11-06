@@ -16,6 +16,8 @@ namespace SnakeSFML
     class Program
     {
         private static RenderWindow window;
+        private static SnakeDirection direction;
+        private static RenderTexture texture;
         private static List<SnakeParticle> snakePartsList;
 
         static void OnClose(object sender, EventArgs e)
@@ -25,21 +27,42 @@ namespace SnakeSFML
             
         }
 
+        static void SnakeAddParticleToList(Texture texture, float x, float y)
+        {
+            SnakeParticle snkprt = new SnakeParticle(texture, x, y);
+            snakePartsList.Add(snkprt);
+        }
+
         static void OnKeyPressed(object window, EventArgs e)
         {
             KeyEventArgs key = (KeyEventArgs)e;
 
             if (key.Code.Equals(Keyboard.Key.W))
-                snakePartsList[0].MoveBy(0, 20);
-
+            {
+                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() - 20));
+                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                Console.WriteLine("Moved up");
+            }
             else if (key.Code.Equals(Keyboard.Key.S))
-                snakePartsList[0].MoveBy(0, -20);
+            {
+                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() + 20));
+                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                Console.WriteLine("Moved up");
+            }
 
             else if (key.Code.Equals(Keyboard.Key.A))
-                snakePartsList[0].MoveBy(20, 0);
+            {
+                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() - 20, snakePartsList[0].GetY()));
+                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                Console.WriteLine("Moved up");
+            }
 
             else if (key.Code.Equals(Keyboard.Key.D))
-                snakePartsList[0].MoveBy(-20, 0);
+            {
+                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() + 20, snakePartsList[0].GetY()));
+                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                Console.WriteLine("Moved up");
+            }
         }
 
         static void Main()
@@ -47,21 +70,19 @@ namespace SnakeSFML
             window = new RenderWindow(new VideoMode(800, 600), "SnakeSFML");
             window.Closed += new EventHandler(OnClose);
             
-            RenderTexture texture = new RenderTexture(20, 20);
+            texture = new RenderTexture(20, 20);
             texture.Clear(Color.White);
-
             snakePartsList = new List<SnakeParticle>();
-            SnakeParticle snkprt = new SnakeParticle(texture.Texture, 20, 20);
-            snakePartsList.Add(snkprt);
+            direction = new SnakeDirection();
 
-            
+            SnakeAddParticleToList(texture.Texture, 20, 20);
+            SnakeAddParticleToList(texture.Texture, 20, 40);
+            SnakeAddParticleToList(texture.Texture, 20, 60);
+            SnakeAddParticleToList(texture.Texture, 20, 80);
+            SnakeAddParticleToList(texture.Texture, 20, 100);
+
             window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
-            
 
-            foreach (SnakeParticle obj in snakePartsList)
-                obj.Draw(window);
-            
-            
             while (window.IsOpen)
             {
                 window.Clear(Color.Black);
