@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace SnakeSFML
 {
     class Program
     {
+        private static RenderWindow window;
+        private static List<SnakeParticle> snakePartsList;
+
         static void OnClose(object sender, EventArgs e)
         {
             RenderWindow window = (RenderWindow)sender;
@@ -21,45 +25,51 @@ namespace SnakeSFML
             
         }
 
-        static void MoveSnake(Keyboard.Key key, object window, object snakepart)
+        static void OnKeyPressed(object window, EventArgs e)
         {
-            SnakeParticle snkprt = (SnakeParticle)snakepart;
+            KeyEventArgs key = (KeyEventArgs)e;
 
-            if (key == Keyboard.Key.W)
-                snkprt.MoveBy(0, 20);
+            if (key.Code.Equals(Keyboard.Key.W))
+                snakePartsList[0].MoveBy(0, 20);
 
-            else if (key == Keyboard.Key.S)
-                snkprt.MoveBy(0, -20);
+            else if (key.Code.Equals(Keyboard.Key.S))
+                snakePartsList[0].MoveBy(0, -20);
 
-            else if (key == Keyboard.Key.A)
-                snkprt.MoveBy(20, 0);
+            else if (key.Code.Equals(Keyboard.Key.A))
+                snakePartsList[0].MoveBy(20, 0);
 
-            else if (key == Keyboard.Key.D)
-                snkprt.MoveBy(-20, 0);
+            else if (key.Code.Equals(Keyboard.Key.D))
+                snakePartsList[0].MoveBy(-20, 0);
         }
 
         static void Main()
         {
-            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SnakeSFML");
+            window = new RenderWindow(new VideoMode(800, 600), "SnakeSFML");
             window.Closed += new EventHandler(OnClose);
             
             RenderTexture texture = new RenderTexture(20, 20);
             texture.Clear(Color.White);
 
-            SnakeParticle snakepart = new SnakeParticle(texture.Texture, 20, 20);
+            snakePartsList = new List<SnakeParticle>();
+            SnakeParticle snkprt = new SnakeParticle(texture.Texture, 20, 20);
+            snakePartsList.Add(snkprt);
 
-            window.KeyPressed += (o, a) => MoveSnake(a.Code, window, snakepart);
-            //window.KeyReleased += (o, a) => MoveSnake(a.Code, window, snakepart);
+            
+            window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
+            
 
-            snakepart.Draw(window);
-
+            foreach (SnakeParticle obj in snakePartsList)
+                obj.Draw(window);
+            
+            
             while (window.IsOpen)
             {
                 window.Clear(Color.Black);
-                snakepart.Draw(window);
+                foreach (SnakeParticle obj in snakePartsList)
+                    obj.Draw(window);
+
                 window.DispatchEvents();
                 window.Display();
-                
             }
         }
     }

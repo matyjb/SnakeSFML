@@ -24,7 +24,7 @@ namespace Snake
         public void MoveBy(float x, float y)
         {
             Part.Position = new Vector2f(Part.Position.X - x, Part.Position.Y - y);
-            Console.WriteLine("Poruszono");
+            Console.WriteLine("Moved by x = " + x + " | y = " + y);
         }
 
         public void MoveTo(float x, float y)
