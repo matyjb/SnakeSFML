@@ -1,0 +1,5 @@
+To hook up SFML.Net libraries right click your project in the solution explorer and select "Add Reference...". 
+Then browse to the SFML.Net binding dlls under the "lib" folder that you downloaded. 
+Now all you need is to add in the CSFML libraries. 
+Now right click your solution and select "Add>>Existing Item...". 
+Browse to the "extlibs" folder this time and add the unmanaged CSFML dlls as files to your project. 
