@@ -5,6 +5,19 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeSFML", "SnakeSFML\SnakeSFML.csproj", "{2F23EBBA-B528-43BE-B396-45B3755C5ABF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A9F0CB0-B265-4973-8FA9-AE9DCEB35952}"
+	ProjectSection(SolutionItems) = preProject
+		SFML.Net-2.2-32bit\extlibs\csfml-audio-2.dll = SFML.Net-2.2-32bit\extlibs\csfml-audio-2.dll
+		SFML.Net-2.2-32bit\extlibs\csfml-graphics-2.dll = SFML.Net-2.2-32bit\extlibs\csfml-graphics-2.dll
+		SFML.Net-2.2-32bit\extlibs\csfml-network-2.dll = SFML.Net-2.2-32bit\extlibs\csfml-network-2.dll
+		SFML.Net-2.2-32bit\extlibs\csfml-system-2.dll = SFML.Net-2.2-32bit\extlibs\csfml-system-2.dll
+		SFML.Net-2.2-32bit\extlibs\csfml-window-2.dll = SFML.Net-2.2-32bit\extlibs\csfml-window-2.dll
+		SFML.Net-2.2-32bit\extlibs\libsndfile-1.dll = SFML.Net-2.2-32bit\extlibs\libsndfile-1.dll
+		SFML.Net-2.2-32bit\extlibs\openal32.dll = SFML.Net-2.2-32bit\extlibs\openal32.dll
+		SFML.Net-2.2-32bit\extlibs\OpenTK.Compatibility.dll = SFML.Net-2.2-32bit\extlibs\OpenTK.Compatibility.dll
+		SFML.Net-2.2-32bit\extlibs\OpenTK.dll = SFML.Net-2.2-32bit\extlibs\OpenTK.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

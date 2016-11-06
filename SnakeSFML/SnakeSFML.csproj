@@ -39,6 +39,18 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="sfmlnet-audio-2">
+      <HintPath>..\SFML.Net-2.2-32bit\lib\sfmlnet-audio-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-graphics-2">
+      <HintPath>..\SFML.Net-2.2-32bit\lib\sfmlnet-graphics-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-system-2">
+      <HintPath>..\SFML.Net-2.2-32bit\lib\sfmlnet-system-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-window-2">
+      <HintPath>..\SFML.Net-2.2-32bit\lib\sfmlnet-window-2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
