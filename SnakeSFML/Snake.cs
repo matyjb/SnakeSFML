@@ -9,8 +9,8 @@ using SFML.Graphics;
 
 namespace Snake
 {
-    enum Directions { N,S,E,W}
-
+    enum Directions {N,S,E,W}
+    
     class SnakeDirection
     {
         public Directions direction;

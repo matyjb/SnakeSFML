@@ -36,6 +36,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PointToEat.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Snake.cs" />
   </ItemGroup>

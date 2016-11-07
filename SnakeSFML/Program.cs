@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SFML;
+using SFML.System;
 using SFML.Graphics;
 using SFML.Window;
 
 using Snake;
+using PointToEat;
 
 namespace SnakeSFML
 {
@@ -17,8 +18,11 @@ namespace SnakeSFML
     {
         private static RenderWindow window;
         private static SnakeDirection direction;
-        private static RenderTexture texture;
+        private static RenderTexture textureW, textureR;
         private static List<SnakeParticle> snakePartsList;
+        private static bool canStillChangeDirection;
+        private static bool removeParticle = true;
+        private static PointToEat.PointToEat pointToEat;
 
         static void OnClose(object sender, EventArgs e)
         {
@@ -33,113 +37,160 @@ namespace SnakeSFML
             snakePartsList.Add(snkprt);
         }
 
-        static void MoveSnake()
+        static void MoveSnake(bool removeLastParticle)
         {
             if(direction.direction == Directions.N)
             {
-                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() - 20));
-                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                snakePartsList.Insert(0, new SnakeParticle(textureW.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() - 20));
+                
                 Console.WriteLine("Moved up");
             }
             else if (direction.direction == Directions.S)
             {
-                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() + 20));
-                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                snakePartsList.Insert(0, new SnakeParticle(textureW.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() + 20));
+                
                 Console.WriteLine("Moved down");
             }
 
             else if (direction.direction == Directions.W)
             {
-                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() - 20, snakePartsList[0].GetY()));
-                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                snakePartsList.Insert(0, new SnakeParticle(textureW.Texture, snakePartsList[0].GetX() - 20, snakePartsList[0].GetY()));
+                
                 Console.WriteLine("Moved left");
             }
 
             else if (direction.direction == Directions.E)
             {
-                snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() + 20, snakePartsList[0].GetY()));
-                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
+                snakePartsList.Insert(0, new SnakeParticle(textureW.Texture, snakePartsList[0].GetX() + 20, snakePartsList[0].GetY()));
+                
                 Console.WriteLine("Moved right");
             }
-
+            if(removeLastParticle)
+                snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
         }
 
         static void OnKeyPressed(object window, EventArgs e)
         {
             KeyEventArgs key = (KeyEventArgs)e;
-
-            if (key.Code.Equals(Keyboard.Key.W))
+            if (canStillChangeDirection)
             {
-                if (direction.direction != Directions.S)
+                if (!(direction.direction.Equals(Directions.S) || direction.direction.Equals(Directions.N)))
                 {
-                    direction.direction = Directions.N;
-                    Console.WriteLine("Changed direction to N");
-                } 
-            }
-            else if (key.Code.Equals(Keyboard.Key.S))
-            {
-                if (direction.direction != Directions.N)
-                {
-                    direction.direction = Directions.S;
-                    Console.WriteLine("Changed direction to S");
+                    if (key.Code.Equals(Keyboard.Key.W))
+                    {
+                        direction.direction = Directions.N;
+                        Console.WriteLine("Changed direction to N");
+                        canStillChangeDirection = false;
+                    }
+                    else if (key.Code.Equals(Keyboard.Key.S))
+                    {
+                        direction.direction = Directions.S;
+                        Console.WriteLine("Changed direction to S");
+                        canStillChangeDirection = false;
+                    }
                 }
-            }
-
-            else if (key.Code.Equals(Keyboard.Key.A))
-            {
-                if (direction.direction != Directions.E)
+                else if (!(direction.direction.Equals(Directions.E) || direction.direction.Equals(Directions.W)))
                 {
-                    direction.direction = Directions.W;
-                    Console.WriteLine("Changed direction to W");
+                    if (key.Code.Equals(Keyboard.Key.A))
+                    {
+                        direction.direction = Directions.W;
+                        Console.WriteLine("Changed direction to W");
+                        canStillChangeDirection = false;
+                    }
+                    else if (key.Code.Equals(Keyboard.Key.D))
+                    {
+                        direction.direction = Directions.E;
+                        Console.WriteLine("Changed direction to E");
+                        canStillChangeDirection = false;
+                    }
                 }
-            }
-
-            else if (key.Code.Equals(Keyboard.Key.D))
-            {
-                if (direction.direction != Directions.W)
-                {
-                    direction.direction = Directions.E;
-                    Console.WriteLine("Changed direction to E");
-                }
-            }
-            else if (key.Code.Equals(Keyboard.Key.Escape))
+            }  
+            if (key.Code.Equals(Keyboard.Key.Escape))
             {
                 OnClose(window, null);
             }
+            if (key.Code.Equals(Keyboard.Key.F))
+            {
+                removeParticle = false;
+            }
+                      
+        }
+
+        static bool CheckPointPick()
+        {
+            if(snakePartsList[0].GetX().Equals(pointToEat.GetX()) && snakePartsList[0].GetY().Equals(pointToEat.GetY()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static void PointGained()
+        {
+            Random rndX = new Random(); Random rndY = new Random();
+            float modX = 1, modY = 1;
+            bool isPointNotOnParticle=true;
+            do
+            {
+                modX = rndX.Next(0, Convert.ToInt16(window.Size.X) / 20) * 20;
+                modY = rndY.Next(0, Convert.ToInt16(window.Size.Y) / 20) * 20;
+
+                foreach (SnakeParticle obj in snakePartsList)
+                    if (!(obj.GetX().Equals(modX) && obj.GetY().Equals(modY))) isPointNotOnParticle = false;
+                    else isPointNotOnParticle = true;
+
+            } while (isPointNotOnParticle);
+
+            pointToEat.MoveTo(modX, modY);
+            removeParticle = false;
+            Console.WriteLine("Point gained!");
         }
         
         static void Main()
         {
+
             window = new RenderWindow(new VideoMode(800, 600), "SnakeSFML");
             window.Closed += new EventHandler(OnClose);
-            
-            texture = new RenderTexture(20, 20);
-            texture.Clear(Color.White);
+
+            textureW = new RenderTexture(20, 20); textureR = new RenderTexture(20, 20);
+            textureW.Clear(Color.White); textureR.Clear(Color.Red);
+
+            pointToEat = new PointToEat.PointToEat(textureR.Texture, 60, 100);
+
             snakePartsList = new List<SnakeParticle>();
             direction = new SnakeDirection();
 
-            SFML.System.Clock clock = new SFML.System.Clock();
+            Clock clock = new Clock();
 
-            SnakeAddParticleToList(texture.Texture, 20, 20);
-            SnakeAddParticleToList(texture.Texture, 20, 40);
-            SnakeAddParticleToList(texture.Texture, 20, 60);
-            SnakeAddParticleToList(texture.Texture, 20, 80);
-            SnakeAddParticleToList(texture.Texture, 20, 100);
-
+            SnakeAddParticleToList(textureW.Texture, 20, 20);
+            SnakeAddParticleToList(textureW.Texture, 20, 40);
+            
             window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
 
             while (window.IsOpen)
             {
                 window.Clear(Color.Black);
+                
+                window.DispatchEvents();
+                
+                pointToEat.Draw(window);
                 foreach (SnakeParticle obj in snakePartsList)
                     obj.Draw(window);
-                SFML.System.Time elapsed = clock.ElapsedTime;
-                SFML.System.Time speedOfSnake = SFML.System.Time.FromSeconds(0.3f);
+
+                Time elapsed = clock.ElapsedTime;
+                Time speedOfSnake = Time.FromSeconds(0.1f);
+
                 if (elapsed >= speedOfSnake)
                 {
-                    MoveSnake(); clock.Restart();
+                    
+                    if (CheckPointPick())
+                        PointGained();
+                    MoveSnake(removeParticle);
+                    clock.Restart();
+                    canStillChangeDirection = true;
+                    removeParticle = true;
                 }
-                window.DispatchEvents();
+                
                 window.Display();
             }
         }
