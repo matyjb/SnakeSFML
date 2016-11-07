@@ -33,38 +33,81 @@ namespace SnakeSFML
             snakePartsList.Add(snkprt);
         }
 
-        static void OnKeyPressed(object window, EventArgs e)
+        static void MoveSnake()
         {
-            KeyEventArgs key = (KeyEventArgs)e;
-
-            if (key.Code.Equals(Keyboard.Key.W))
+            if(direction.direction == Directions.N)
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() - 20));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
                 Console.WriteLine("Moved up");
             }
-            else if (key.Code.Equals(Keyboard.Key.S))
+            else if (direction.direction == Directions.S)
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX(), snakePartsList[0].GetY() + 20));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
                 Console.WriteLine("Moved down");
             }
 
-            else if (key.Code.Equals(Keyboard.Key.A))
+            else if (direction.direction == Directions.W)
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() - 20, snakePartsList[0].GetY()));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
                 Console.WriteLine("Moved left");
             }
 
-            else if (key.Code.Equals(Keyboard.Key.D))
+            else if (direction.direction == Directions.E)
             {
                 snakePartsList.Insert(0, new SnakeParticle(texture.Texture, snakePartsList[0].GetX() + 20, snakePartsList[0].GetY()));
                 snakePartsList.Remove(snakePartsList[snakePartsList.Count - 1]);
                 Console.WriteLine("Moved right");
             }
+
         }
 
+        static void OnKeyPressed(object window, EventArgs e)
+        {
+            KeyEventArgs key = (KeyEventArgs)e;
+
+            if (key.Code.Equals(Keyboard.Key.W))
+            {
+                if (direction.direction != Directions.S)
+                {
+                    direction.direction = Directions.N;
+                    Console.WriteLine("Changed direction to N");
+                } 
+            }
+            else if (key.Code.Equals(Keyboard.Key.S))
+            {
+                if (direction.direction != Directions.N)
+                {
+                    direction.direction = Directions.S;
+                    Console.WriteLine("Changed direction to S");
+                }
+            }
+
+            else if (key.Code.Equals(Keyboard.Key.A))
+            {
+                if (direction.direction != Directions.E)
+                {
+                    direction.direction = Directions.W;
+                    Console.WriteLine("Changed direction to W");
+                }
+            }
+
+            else if (key.Code.Equals(Keyboard.Key.D))
+            {
+                if (direction.direction != Directions.W)
+                {
+                    direction.direction = Directions.E;
+                    Console.WriteLine("Changed direction to E");
+                }
+            }
+            else if (key.Code.Equals(Keyboard.Key.Escape))
+            {
+                OnClose(window, null);
+            }
+        }
+        
         static void Main()
         {
             window = new RenderWindow(new VideoMode(800, 600), "SnakeSFML");
@@ -74,6 +117,8 @@ namespace SnakeSFML
             texture.Clear(Color.White);
             snakePartsList = new List<SnakeParticle>();
             direction = new SnakeDirection();
+
+            SFML.System.Clock clock = new SFML.System.Clock();
 
             SnakeAddParticleToList(texture.Texture, 20, 20);
             SnakeAddParticleToList(texture.Texture, 20, 40);
@@ -88,7 +133,12 @@ namespace SnakeSFML
                 window.Clear(Color.Black);
                 foreach (SnakeParticle obj in snakePartsList)
                     obj.Draw(window);
-
+                SFML.System.Time elapsed = clock.ElapsedTime;
+                SFML.System.Time speedOfSnake = SFML.System.Time.FromSeconds(0.3f);
+                if (elapsed >= speedOfSnake)
+                {
+                    MoveSnake(); clock.Restart();
+                }
                 window.DispatchEvents();
                 window.Display();
             }

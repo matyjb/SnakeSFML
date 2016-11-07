@@ -13,7 +13,7 @@ namespace Snake
 
     class SnakeDirection
     {
-        Directions direction;
+        public Directions direction;
 
         public SnakeDirection(Directions directionn = Directions.N)
         {
