@@ -23,6 +23,8 @@ namespace SnakeSFML
         private static bool canStillChangeDirection;
         private static bool removeParticle = true;
         private static PointToEat.PointToEat pointToEat;
+        private static bool MainGameOn=true;
+        private static Font arialF = new Font("arial.ttf");
 
         static void OnClose(object sender, EventArgs e)
         {
@@ -145,6 +147,21 @@ namespace SnakeSFML
             removeParticle = false;
             Console.WriteLine("Point gained!");
         }
+
+        static bool CheckOverlapingOrOutOfBorderOfSnake(List<SnakeParticle> snakePartsList, Vector2u windowSize)
+        {
+            for (int i = 1; i < snakePartsList.Count(); i++)
+                if (snakePartsList[i].GetX() == snakePartsList[0].GetX())
+                    if (snakePartsList[i].GetY() == snakePartsList[0].GetY())
+                        return true;
+
+            if (snakePartsList[0].GetX() > windowSize.X || snakePartsList[0].GetX() < 0)
+                return true;
+            if (snakePartsList[0].GetY() > windowSize.Y || snakePartsList[0].GetY() < 0)
+                return true;
+
+            return false;
+        }   
         
         static void Main()
         {
@@ -162,36 +179,56 @@ namespace SnakeSFML
 
             Clock clock = new Clock();
 
-            SnakeAddParticleToList(textureW.Texture, 20, 20);
             SnakeAddParticleToList(textureW.Texture, 20, 40);
+            SnakeAddParticleToList(textureW.Texture, 20, 20);
             
             window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
 
             while (window.IsOpen)
             {
+                window.DispatchEvents();
+                while (MainGameOn)
+                {
+                    window.Clear(Color.Black);
+
+                    window.DispatchEvents();
+
+                    pointToEat.Draw(window);
+                    foreach (SnakeParticle obj in snakePartsList)
+                        obj.Draw(window);
+
+                    Time elapsed = clock.ElapsedTime;
+                    Time speedOfSnake = Time.FromSeconds(0.1f);
+
+                    if (elapsed >= speedOfSnake)
+                    {
+
+                        if (CheckPointPick())
+                            PointGained();
+                        MoveSnake(removeParticle);
+                        clock.Restart();
+                        canStillChangeDirection = true;
+                        removeParticle = true;
+
+
+                        if (CheckOverlapingOrOutOfBorderOfSnake(snakePartsList, window.Size))
+                        {
+                            Console.WriteLine("GAME OVER"); MainGameOn = false;
+                        }
+                        
+                    }
+                    window.Display();
+                }
                 window.Clear(Color.Black);
                 
-                window.DispatchEvents();
-                
-                pointToEat.Draw(window);
-                foreach (SnakeParticle obj in snakePartsList)
-                    obj.Draw(window);
+                Text gameOver = new Text("GAME OVER", arialF, 16);
+                RenderTexture gameOverTexture = new RenderTexture(500, 300);
+                gameOver.Color = Color.White;
+                gameOver.Position = new Vector2f(window.Size.X/4,window.Size.Y/2);
+                gameOver.Draw(window,RenderStates.Default);
 
-                Time elapsed = clock.ElapsedTime;
-                Time speedOfSnake = Time.FromSeconds(0.1f);
-
-                if (elapsed >= speedOfSnake)
-                {
-                    
-                    if (CheckPointPick())
-                        PointGained();
-                    MoveSnake(removeParticle);
-                    clock.Restart();
-                    canStillChangeDirection = true;
-                    removeParticle = true;
-                }
-                
                 window.Display();
+
             }
         }
     }
